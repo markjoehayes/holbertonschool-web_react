@@ -4,59 +4,59 @@ interface Student {
     lastName: string;
     age: number;
     location: string;
-  }
-  
-  // Create two student variables
-  const student1: Student = {
-    firstName: "John",
-    lastName: "Doe",
+}
+
+// Create two student variables
+const student1: Student = {
+    firstName: 'John',
+    lastName: 'Doe',
     age: 20,
-    location: "New York"
-  };
-  
-  const student2: Student = {
-    firstName: "Jane",
-    lastName: "Smith",
+    location: 'New York'
+};
+
+const student2: Student = {
+    firstName: 'Jane',
+    lastName: 'Smith',
     age: 22,
-    location: "California"
-  };
-  
-  // Store students in an array
-  const studentsList: Student[] = [student1, student2];
-  
-  // Create and render the table using Vanilla JavaScript
-  const body: HTMLBodyElement = document.getElementsByTagName("body")[0];
-  const table: HTMLTableElement = document.createElement("table");
-  const tableHead: HTMLTableSectionElement = document.createElement("thead");
-  const tableBody: HTMLTableSectionElement = document.createElement("tbody");
-  
-  // Create table header
-  const headerRow: HTMLTableRowElement = document.createElement("tr");
-  const firstNameHeader: HTMLTableCellElement = document.createElement("th");
-  const locationHeader: HTMLTableCellElement = document.createElement("th");
-  
-  firstNameHeader.textContent = "First Name";
-  locationHeader.textContent = "Location";
-  
-  headerRow.appendChild(firstNameHeader);
-  headerRow.appendChild(locationHeader);
-  tableHead.appendChild(headerRow);
-  
-  // Create table rows for each student
-  studentsList.forEach((student: Student) => {
-    const row: HTMLTableRowElement = document.createElement("tr");
-    const firstNameCell: HTMLTableCellElement = document.createElement("td");
-    const locationCell: HTMLTableCellElement = document.createElement("td");
+    location: 'Los Angeles'
+};
+
+// Create array of students
+const studentsList: Student[] = [student1, student2];
+
+// Create table and render it using Vanilla JavaScript
+const table = document.createElement('table');
+const tbody = document.createElement('tbody');
+
+// Create header row
+const headerRow = document.createElement('tr');
+const headerFirstName = document.createElement('th');
+const headerLocation = document.createElement('th');
+
+headerFirstName.textContent = 'First Name';
+headerLocation.textContent = 'Location';
+
+headerRow.appendChild(headerFirstName);
+headerRow.appendChild(headerLocation);
+tbody.appendChild(headerRow);
+
+// Create a row for each student
+studentsList.forEach((student: Student) => {
+    const row = document.createElement('tr');
+    
+    const firstNameCell = document.createElement('td');
+    const locationCell = document.createElement('td');
     
     firstNameCell.textContent = student.firstName;
     locationCell.textContent = student.location;
     
     row.appendChild(firstNameCell);
     row.appendChild(locationCell);
-    tableBody.appendChild(row);
-  });
-  
-  // Assemble the table
-  table.appendChild(tableHead);
-  table.appendChild(tableBody);
-  body.appendChild(table);
+    tbody.appendChild(row);
+});
+
+table.appendChild(tbody);
+document.body.appendChild(table);
+
+// Export for testing purposes
+export { Student, studentsList };
