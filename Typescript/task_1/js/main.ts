@@ -21,6 +21,21 @@ interface Directors extends Teacher {
   numberOfReports: number;
 }
 
+// Interface for the printTeacher function
+interface printTeacherFunction {
+  (firstName: string, lastName: string): string;
+}
+
+// Implement the printTeacher function
+const printTeacher: printTeacherFunction = (firstName: string, lastName: string): string => {
+  return `${firstName.charAt(0)}. ${lastName}`;
+};
+
+// Alternative implementation using regular function syntax
+// function printTeacher(firstName: string, lastName: string): string {
+//   return `${firstName[0]}. ${lastName}`;
+// }
+
 // Example usage from the assignment
 const director1: Directors = {
   firstName: 'John',
@@ -37,8 +52,8 @@ const director2: Directors = {
   location: 'New York',
   fullTimeEmployee: true,
   numberOfReports: 25,
-  yearsOfExperience: 15, // Optional property from Teacher interface
-  contract: true, // Additional property allowed by index signature
+  yearsOfExperience: 15,
+  contract: true,
 };
 
 const director3: Directors = {
@@ -47,10 +62,10 @@ const director3: Directors = {
   location: 'Paris',
   fullTimeEmployee: false,
   numberOfReports: 8,
-  department: 'Engineering', // Additional property
+  department: 'Engineering',
 };
 
-// Example from previous task (kept for reference)
+// Example from previous task
 const teacher3: Teacher = {
   firstName: 'John',
   fullTimeEmployee: false,
@@ -59,7 +74,44 @@ const teacher3: Teacher = {
   contract: false,
 };
 
-console.log('Director 1:');
+// Test the printTeacher function with different inputs
+console.log('Testing printTeacher function:');
+console.log('printTeacher("John", "Doe"):', printTeacher("John", "Doe"));
+console.log('printTeacher("Jane", "Smith"):', printTeacher("Jane", "Smith"));
+console.log('printTeacher("Mike", "Johnson"):', printTeacher("Mike", "Johnson"));
+console.log('printTeacher("Alice", "Wonderland"):', printTeacher("Alice", "Wonderland"));
+
+// Test with director and teacher names
+console.log('\nPrinting director names:');
+console.log(`Director 1: ${printTeacher(director1.firstName, director1.lastName)}`);
+console.log(`Director 2: ${printTeacher(director2.firstName, director2.lastName)}`);
+console.log(`Director 3: ${printTeacher(director3.firstName, director3.lastName)}`);
+console.log(`Teacher 3: ${printTeacher(teacher3.firstName, teacher3.lastName)}`);
+
+// Test edge cases
+console.log('\nTesting edge cases:');
+console.log('printTeacher("A", "Single"):', printTeacher("A", "Single"));
+console.log('printTeacher("", "EmptyFirstName"):', printTeacher("", "EmptyFirstName"));
+
+// Function that uses the printTeacherFunction interface
+function formatTeacherName(printer: printTeacherFunction, firstName: string, lastName: string): string {
+  return `Formatted: ${printer(firstName, lastName)}`;
+}
+
+console.log('\nUsing interface with a function:');
+console.log(formatTeacherName(printTeacher, "Robert", "Brown"));
+
+// Create another function that matches the printTeacherFunction interface
+const alternativePrinter: printTeacherFunction = (first: string, last: string): string => {
+  const firstInitial = first.length > 0 ? first[0].toUpperCase() : '';
+  return `${firstInitial}. ${last}`;
+};
+
+console.log('\nAlternative printer:');
+console.log(alternativePrinter("john", "doe")); // Should print "J. doe"
+console.log(alternativePrinter("MARY", "JANE")); // Should print "M. JANE"
+
+console.log('\nDirector 1:');
 console.log(director1);
 
 console.log('\nDirector 2:');
@@ -68,12 +120,12 @@ console.log(director2);
 console.log('\nDirector 3:');
 console.log(director3);
 
-console.log('\nTeacher 3 (for comparison):');
+console.log('\nTeacher 3:');
 console.log(teacher3);
 
 // Function to display Director information
 function displayDirector(director: Directors): void {
-  console.log(`\nDisplaying Director ${director.firstName} ${director.lastName}:`);
+  console.log(`\nDisplaying Director ${printTeacher(director.firstName, director.lastName)}:`);
   console.log(`Location: ${director.location}`);
   console.log(`Full Time: ${director.fullTimeEmployee}`);
   console.log(`Number of Reports: ${director.numberOfReports}`);
@@ -91,9 +143,9 @@ function displayDirector(director: Directors): void {
   }
 }
 
-// Function to display Teacher information (for comparison)
+// Function to display Teacher information
 function displayTeacher(teacher: Teacher): void {
-  console.log(`\nDisplaying Teacher ${teacher.firstName} ${teacher.lastName}:`);
+  console.log(`\nDisplaying Teacher ${printTeacher(teacher.firstName, teacher.lastName)}:`);
   console.log(`Location: ${teacher.location}`);
   console.log(`Full Time: ${teacher.fullTimeEmployee}`);
   
@@ -117,22 +169,15 @@ displayDirector(director2);
 displayDirector(director3);
 displayTeacher(teacher3);
 
-// Test that Directors can have all Teacher properties
-const mixedDirector: Directors = {
-  firstName: 'Sarah',
-  lastName: 'Williams',
-  fullTimeEmployee: true,
-  location: 'Berlin',
-  numberOfReports: 12,
-  // All Teacher properties work
-  yearsOfExperience: 8,
-  // Additional properties work
-  certification: ['PMP', 'Scrum Master'],
-  contactEmail: 'sarah@example.com'
-};
-
-console.log('\nMixed Director with various properties:');
-console.log(mixedDirector);
-
 // Export interfaces and examples for testing
-export { Teacher, Directors, teacher3, director1, director2, director3, mixedDirector };
+export { 
+  Teacher, 
+  Directors, 
+  printTeacherFunction,
+  printTeacher,
+  teacher3, 
+  director1, 
+  director2, 
+  director3,
+  formatTeacherName
+};
