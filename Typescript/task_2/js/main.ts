@@ -44,6 +44,9 @@ class Teacher implements TeacherInterface {
 // Union type for Employee
 type Employee = Director | Teacher;
 
+// String literal type for Subjects
+type Subjects = 'Math' | 'History';
+
 // Function to create employee based on salary
 function createEmployee(salary: number | string): Employee {
   if (typeof salary === 'number' && salary < 500) {
@@ -53,103 +56,123 @@ function createEmployee(salary: number | string): Employee {
   }
 }
 
-// Test cases from the assignment
-console.log('Testing createEmployee function:');
-console.log('createEmployee(200):', createEmployee(200));
-console.log('createEmployee(1000):', createEmployee(1000));
-console.log('createEmployee("$500"):', createEmployee('$500'));
-
-// Additional test cases
-console.log('\nAdditional test cases:');
-console.log('createEmployee(499):', createEmployee(499));
-console.log('createEmployee(500):', createEmployee(500));
-console.log('createEmployee(0):', createEmployee(0));
-console.log('createEmployee("100"):', createEmployee('100'));
-console.log('createEmployee(""):', createEmployee(''));
-
-// Testing method calls on returned instances
-console.log('\nTesting methods on created employees:');
-
-const employee1 = createEmployee(200);
-console.log('\nEmployee 1 (salary: 200):');
-console.log('Type:', employee1.constructor.name);
-if ('workTeacherTasks' in employee1) {
-  console.log('workFromHome():', employee1.workFromHome());
-  console.log('getCoffeeBreak():', employee1.getCoffeeBreak());
-  console.log('workTeacherTasks():', employee1.workTeacherTasks());
-}
-
-const employee2 = createEmployee(1000);
-console.log('\nEmployee 2 (salary: 1000):');
-console.log('Type:', employee2.constructor.name);
-if ('workDirectorTasks' in employee2) {
-  console.log('workFromHome():', employee2.workFromHome());
-  console.log('getCoffeeBreak():', employee2.getCoffeeBreak());
-  console.log('workDirectorTasks():', employee2.workDirectorTasks());
-}
-
-const employee3 = createEmployee('$500');
-console.log('\nEmployee 3 (salary: "$500"):');
-console.log('Type:', employee3.constructor.name);
-if ('workDirectorTasks' in employee3) {
-  console.log('workFromHome():', employee3.workFromHome());
-  console.log('getCoffeeBreak():', employee3.getCoffeeBreak());
-  console.log('workDirectorTasks():', employee3.workDirectorTasks());
-}
-
-// Type guard functions
+// Function isDirector - type predicate
 function isDirector(employee: Employee): employee is Director {
-  return 'workDirectorTasks' in employee;
+  return employee instanceof Director;
 }
 
-function isTeacher(employee: Employee): employee is Teacher {
-  return 'workTeacherTasks' in employee;
-}
-
-// Function to execute work based on employee type
+// Function executeWork
 function executeWork(employee: Employee): string {
   if (isDirector(employee)) {
     return employee.workDirectorTasks();
-  } else if (isTeacher(employee)) {
+  } else {
     return employee.workTeacherTasks();
   }
-  return 'Unknown employee type';
 }
 
-// Test type guards and executeWork function
-console.log('\nTesting type guards and executeWork:');
+// Function teachClass
+function teachClass(todayClass: Subjects): string {
+  if (todayClass === 'Math') {
+    return 'Teaching Math';
+  } else if (todayClass === 'History') {
+    return 'Teaching History';
+  } else {
+    // This should never happen due to the Subjects type, but TypeScript needs this
+    throw new Error(`Invalid subject: ${todayClass}`);
+  }
+}
 
-const testEmployees: Array<{ salary: number | string; expectedType: string }> = [
-  { salary: 200, expectedType: 'Teacher' },
-  { salary: 1000, expectedType: 'Director' },
-  { salary: '$500', expectedType: 'Director' },
-  { salary: 499, expectedType: 'Teacher' },
-  { salary: 500, expectedType: 'Director' }
-];
+// Alternative implementation using switch statement
+function teachClassSwitch(todayClass: Subjects): string {
+  switch (todayClass) {
+    case 'Math':
+      return 'Teaching Math';
+    case 'History':
+      return 'Teaching History';
+    default:
+      // Exhaustiveness check - if we add more Subjects later, TypeScript will warn us
+      const exhaustiveCheck: never = todayClass;
+      return exhaustiveCheck;
+  }
+}
 
-testEmployees.forEach((test, index) => {
-  const employee = createEmployee(test.salary);
-  console.log(`\nTest ${index + 1} (salary: ${test.salary}):`);
-  console.log(`Expected type: ${test.expectedType}`);
-  console.log(`Actual type: ${employee.constructor.name}`);
-  console.log(`isDirector: ${isDirector(employee)}`);
-  console.log(`isTeacher: ${isTeacher(employee)}`);
-  console.log(`executeWork: ${executeWork(employee)}`);
+// Test the functions as required
+console.log('=== Testing executeWork ===');
+console.log('executeWork(createEmployee(200)):', executeWork(createEmployee(200)));
+console.log('executeWork(createEmployee(1000)):', executeWork(createEmployee(1000)));
+
+console.log('\n=== Testing teachClass ===');
+console.log("teachClass('Math'):", teachClass('Math'));
+console.log("teachClass('History'):", teachClass('History'));
+
+console.log('\n=== Testing teachClassSwitch ===');
+console.log("teachClassSwitch('Math'):", teachClassSwitch('Math'));
+console.log("teachClassSwitch('History'):", teachClassSwitch('History'));
+
+// Test with variables of type Subjects
+const mathClass: Subjects = 'Math';
+const historyClass: Subjects = 'History';
+
+console.log('\n=== Testing with Subjects variables ===');
+console.log('mathClass:', mathClass, '->', teachClass(mathClass));
+console.log('historyClass:', historyClass, '->', teachClass(historyClass));
+
+// Demonstrate type safety - these would cause TypeScript errors if uncommented:
+// const invalidClass: Subjects = 'Science'; // Error: Type '"Science"' is not assignable to type 'Subjects'
+// teachClass('English'); // Error: Argument of type '"English"' is not assignable to parameter of type 'Subjects'
+
+// Array of valid Subjects
+const classSchedule: Subjects[] = ['Math', 'History', 'Math', 'History'];
+console.log('\n=== Class Schedule ===');
+classSchedule.forEach((subject, index) => {
+  console.log(`Period ${index + 1}: ${teachClass(subject)}`);
 });
 
-// Create arrays of employees
-const lowSalaryEmployees: Employee[] = [200, 300, 400].map(salary => createEmployee(salary));
-const highSalaryEmployees: Employee[] = [500, 600, 700].map(salary => createEmployee(salary));
+// Function that accepts Subjects type
+function prepareForClass(subject: Subjects): string {
+  switch (subject) {
+    case 'Math':
+      return 'Preparing formulas and exercises';
+    case 'History':
+      return 'Preparing historical timelines';
+    default:
+      return 'Preparing general materials';
+  }
+}
 
-console.log('\nLow salary employees (all should be Teachers):');
-lowSalaryEmployees.forEach((emp, idx) => {
-  console.log(`Employee ${idx + 1}: ${emp.constructor.name} - ${executeWork(emp)}`);
-});
+console.log('\n=== Class Preparation ===');
+console.log(`Math preparation: ${prepareForClass('Math')}`);
+console.log(`History preparation: ${prepareForClass('History')}`);
 
-console.log('\nHigh salary employees (all should be Directors):');
-highSalaryEmployees.forEach((emp, idx) => {
-  console.log(`Employee ${idx + 1}: ${emp.constructor.name} - ${executeWork(emp)}`);
-});
+// Using Subjects in an object
+interface ClassInfo {
+  subject: Subjects;
+  duration: number;
+  room: string;
+}
+
+const mathClassInfo: ClassInfo = {
+  subject: 'Math',
+  duration: 60,
+  room: 'Room 101'
+};
+
+const historyClassInfo: ClassInfo = {
+  subject: 'History',
+  duration: 45,
+  room: 'Room 202'
+};
+
+console.log('\n=== Class Information ===');
+console.log('Math class:', mathClassInfo);
+console.log('History class:', historyClassInfo);
+
+// Test isDirector function
+console.log('\n=== Testing isDirector function ===');
+const emp1 = createEmployee(200);
+const emp2 = createEmployee(1000);
+console.log(`isDirector(createEmployee(200)): ${isDirector(emp1)}`);
+console.log(`isDirector(createEmployee(1000)): ${isDirector(emp2)}`);
 
 // Export for testing
 export {
@@ -157,9 +180,10 @@ export {
   TeacherInterface,
   Director,
   Teacher,
+  Subjects,
   createEmployee,
   isDirector,
-  isTeacher,
   executeWork,
+  teachClass,
   Employee
 };
